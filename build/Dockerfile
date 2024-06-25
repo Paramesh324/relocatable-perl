@@ -9,9 +9,7 @@ RUN apt-get update && apt-get install -y \
     tar \
     curl \
     patch \
-    xz \
-    perl-interpreter \
-    perl
+    xz 
 RUN mkdir -p \
     /lib \
     /lib/$(uname -m)-linux-gnu \
@@ -23,6 +21,13 @@ RUN mkdir -p \
     /usr/local/lib64
 #RUN curl -fsSL https://raw.githubusercontent.com/skaji/relocatable-perl/main/perl-install | bash -s /perl
 #RUN curl -fsSL https://www.cpan.org/src/5.0/perl-5.36.0.tar.xz | tar xJf - --strip-components 1 -C /perl
+RUN curl -fsSL https://www.cpan.org/src/5.0/perl-5.40.0.tar.gz -o perl.tar.gz \
+    && tar -xzf perl.tar.gz \
+    && cd perl-5.40.0 \
+    && ./Configure -des -Dprefix=/usr/local/perl \
+    && make \
+    && make install \
+    && rm -rf /perl.tar.gz perl-5.40.0
 RUN curl -fsSL --compressed -o /cpm https://raw.githubusercontent.com/skaji/cpm/main/cpm
 COPY build/relocatable-perl-build build/cpm.yml BUILD_VERSION /
 RUN /usr/bin/perl /cpm install -g
