@@ -28,6 +28,16 @@ jobs:
         with:
           name: linux-arm64
           path: linux-arm64
+  linux-s390x:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: podman build -t skaji/relocatable-perl-s390x -f build/Dockerfile .
+      - run: bash build/github-actions.sh linux_s390x_create_artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-s390x
+          path: linux-s390x
   darwin-amd64:
     runs-on: macos-13
     steps:
@@ -65,6 +75,7 @@ jobs:
       - linux-arm64
       - darwin-amd64
       - darwin-arm64
+      - linux-s390x
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -82,7 +93,27 @@ jobs:
         with:
           name: darwin-arm64
           path: darwin-arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-s390x
+          path: linux-s390x
       - name: create release and upload release assets
         run: gh release create --repo ${{ github.repository }} ${{ github.ref }} linux-*/*.gz linux-*/*.xz darwin-*/*.gz darwin-*/*.xz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-release-asset@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: linux-s390x/perl-linux-s390x.tar.gz
+          asset_name: perl-linux-s390x.tar.gz
+          asset_content_type: application/gzip
+      - uses: actions/upload-release-asset@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: linux-s390x/perl-linux-s390x.tar.xz
+          asset_name: perl-linux-s390x.tar.xz
+          asset_content_type: application/x-xz
