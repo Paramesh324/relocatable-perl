@@ -53,7 +53,7 @@ linux_arm64_create_artifacts() {
 
 
 linux_s390x_create_artifacts() {
-  mkdir s390x
+  mkdir linux-s390x
   ID=$(podman create --platform linux/s390x skaji/relocatable-perl-s390x)
   podman cp $ID:/perl-linux-s390x.tar.gz linux-s390x/
   podman cp $ID:/perl-linux-s390x.tar.xz linux-s390x/
