@@ -3,13 +3,15 @@ FROM s390x/ubuntu:20.04
 # see https://gist.github.com/skaji/76203327b517cb44da88a4301de118d3
 #RUN sed -i 's/override_install_langs=en_US.UTF-8/override_install_langs=en_US.utf8/' /etc/yum.conf
 
+# Update package list and install dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     make \
     tar \
     curl \
     patch \
-    xz 
+    xz-utils
+
 RUN mkdir -p \
     /lib \
     /lib/$(uname -m)-linux-gnu \
